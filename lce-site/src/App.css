@@ -1,0 +1,96 @@
+.app {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #D9D9D9;
+}
+
+.red-square {
+  width: 50vw;
+  height: 50vh;
+  border-radius: 10px;
+  background-color: #E22A2A;
+}
+
+.title {
+  color: #d9d9d9;
+  padding-left: 25px;
+  padding-top: 15px;
+  font-size: 35px;
+  font-family: Inter;
+  font-weight: 700;
+  word-wrap: break-word;
+  text-shadow: 0px 5px 4px rgba(0, 0, 0, 0.5);  
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 8%;
+}
+
+input {
+  width: 50%;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+}
+
+button {
+  background-color: #787878;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 15px 20px;
+  margin-top: 15px;
+  cursor: pointer;
+}
+
+.red-circle {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background-color: #E22A2A;
+  border-radius: 50%;
+  bottom: -50px;
+  left: -50px;
+}
+
+.red-circle-two {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background-color: #E22A2A;
+  border-radius: 50%;
+  bottom: -100px;
+  left: 50px;
+}
+
+@media (max-width: 768px) {
+  .app {
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .red-square {
+    width: 90vw;
+    height: auto;
+  }
+
+  .title {
+    font-size: 25px;
+    padding-top: 10px;
+  }
+
+  form {
+    padding-top: 5%;
+  }
+
+  input {
+    width: 80%;
+  }
+}
