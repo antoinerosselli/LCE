@@ -10,7 +10,6 @@ function App() {
     <Router>
       <Navbar/>
         <Routes>
-          <Route path="/connection" element={<Connection />} />
           <Route path="/fichedepaie" element={<Paie />} />
           <Route path="/bug" element={<Bug />} />
         </Routes>

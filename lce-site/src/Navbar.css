@@ -38,19 +38,19 @@ a:hover {
 .red-circle {
   position: absolute;
   width: 200px;
-  height: 200px;
+  height: 150px; /* La moitié de la hauteur d'origine */
   background-color: rgba(217, 217, 217, 1);
-  border-radius: 50%;
-  bottom: -50px;
-  left: -50px;
+  border-radius: 100px 100px 0 0; /* Modifier les valeurs du border-radius pour créer la forme souhaitée */
+  bottom: 0;
+  left: 10;
 }
 
 .red-circle-two {
   position: absolute;
   width: 200px;
-  height: 200px;
+  height: 100px; /* La moitié de la hauteur d'origine */
   background-color: rgba(217, 217, 217, 1);
-  border-radius: 50%;
-  bottom: -100px;
-  left: 50px;
+  border-radius: 100px 100px 0 0; /* Modifier les valeurs du border-radius pour créer la forme souhaitée */
+  bottom: 0;
+  left: -30;
 }
