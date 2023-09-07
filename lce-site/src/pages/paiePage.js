@@ -1,16 +1,19 @@
 import React, { useState, useRef } from 'react';
 import '../Paie.css';
+const XLSX = require('xlsx');
 
 function Paie() {
   const [showModal, setShowModal] = useState(false);
+  const [showDataModal, setShowDataModal] = useState(false); // Nouvel état pour la modal de données
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('');
   const [validFiles, setValidFiles] = useState([]);
+  const [jsonData, setJsonData] = useState({}); // Nouvel état pour les données JSON
   const fileInputRef = useRef(null);
 
   const handleFileImport = (event) => {
     const files = event.target.files;
-    const validExtensions = ['csv','xlsm'];
+    const validExtensions = ['csv', 'xlsm'];
 
     const newValidFiles = Array.from(files).filter((file) => {
       const fileExtension = file.name.split('.').pop();
@@ -19,7 +22,7 @@ function Paie() {
 
     if (newValidFiles.length === 0) {
       setShowModal(true);
-      setErrorMessage('un ou des fichier(s) non-valide(s) sélectionné(s).');
+      setErrorMessage('Un ou des fichier(s) non-valide(s) sélectionné(s).');
       if (fileInputRef.current) {
         fileInputRef.current.value = null;
       }
@@ -36,34 +39,62 @@ function Paie() {
   const handleValidation = () => {
     console.log('Mois sélectionné:', selectedMonth);
     console.log('Fichiers validés :', validFiles);
-    let errorFound = false; 
-    
-    validFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const fileContent = event.target.result;
-        console.log(`Contenu de ${file.name}:`);
-        console.log(fileContent);
-        
-        if (!fileContent.includes(selectedMonth)) {
-          console.log(`Le mois "${selectedMonth}" n'est pas présent dans le fichier ${file.name}`);
-          errorFound = true; 
-        }
-      };
-      reader.readAsText(file);
+    let errorFound = false;
+    const moisDataMerged = {};
+    const promises = validFiles.map((file) => {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+  
+        reader.onload = (e) => {
+          const fileContent = e.target.result;
+          const workbook = XLSX.read(fileContent, { type: 'binary' });
+  
+          const sheetName = workbook.SheetNames[2];
+          const worksheet = workbook.Sheets[sheetName];
+  
+          const data = XLSX.utils.sheet_to_json(worksheet);
+  
+          const moisData = data.filter((item) => /MOIS/i.test(item.NOM));
+  
+          moisDataMerged[file.name] = moisData;
+  
+          if (moisData.length > 0) {
+            resolve({ fileName: file.name, data: moisData });
+          } else {
+            resolve(null);
+          }
+        };
+  
+        reader.readAsBinaryString(file);
+      });
     });
+  
+    Promise.all(promises).then((results) => {
+      const mergedData = results.filter((result) => result !== null);
+      if (mergedData.length > 0) {
+        setJsonData(mergedData);
+        setShowDataModal(true);
+      }
+    });
+  
+    console.log('Mois fusionnés :', moisDataMerged);
   
     if (errorFound) {
       setShowModal(true);
       setErrorMessage(`Le mois "${selectedMonth}" n'est pas présent dans un ou plusieurs fichiers.`);
     }
   };
-    
+  
+
+  const closeDataModal = () => { // Nouvelle fonction pour fermer la modal de données
+    setShowDataModal(false);
+  };
+
   const handleMonthSelect = (event) => {
     const selectedMonthValue = event.target.value.toUpperCase();
     setSelectedMonth(selectedMonthValue);
   };
-  
+
   return (
     <div className='paie'>
       <div className='title-n'>Fiche de paie</div>
@@ -91,7 +122,7 @@ function Paie() {
       </div>
 
       {validFiles.length > 0 && (
-        <div >
+        <div>
           <button className='button-validation' onClick={handleValidation}>Valider</button>
         </div>
       )}
@@ -111,6 +142,23 @@ function Paie() {
           </div>
         </div>
       )}
+
+{showDataModal && (
+  <div className='modal'>
+    <div className='modal-content'>
+      <div className='modal-header'>
+        <h2>Resume</h2>
+      </div>
+      <div className='modal-body' style={{ maxHeight: '400px', overflowY: 'auto' }}>
+        <pre>{JSON.stringify(jsonData, null, 2)}</pre>
+      </div>
+      <div className='modal-footer'>
+        <button onClick={closeDataModal}>Fermer</button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
