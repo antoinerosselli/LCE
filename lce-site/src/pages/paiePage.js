@@ -4,11 +4,11 @@ const XLSX = require('xlsx');
 
 function Paie() {
   const [showModal, setShowModal] = useState(false);
-  const [showDataModal, setShowDataModal] = useState(false); // Nouvel état pour la modal de données
+  const [showDataModal, setShowDataModal] = useState(false); 
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('');
   const [validFiles, setValidFiles] = useState([]);
-  const [jsonData, setJsonData] = useState({}); // Nouvel état pour les données JSON
+  const [jsonData, setJsonData] = useState({}); 
   const fileInputRef = useRef(null);
 
   const handleFileImport = (event) => {
@@ -37,8 +37,6 @@ function Paie() {
   };
 
   const handleValidation = () => {
-    console.log('Mois sélectionné:', selectedMonth);
-    console.log('Fichiers validés :', validFiles);
     let errorFound = false;
     const moisDataMerged = {};
     const promises = validFiles.map((file) => {
@@ -50,80 +48,93 @@ function Paie() {
           const workbook = XLSX.read(fileContent, { type: 'binary' });
         
           const sheetName = workbook.SheetNames[selectedMonth];
+          //last mois
+          const lastMonth = workbook.SheetNames[selectedMonth - 1];
           const worksheet = workbook.Sheets[sheetName];
         
           const data = XLSX.utils.sheet_to_json(worksheet);
-        
+          const listeSemaine = [];
+          let index = 10;
+
+          while (index < data.length && !/MOIS/i.test(data[index].NOM)) {
+            listeSemaine.push(data[index]);
+            index++;
+          }
+      
           const moisData = data.filter((item) => /MOIS/i.test(item.NOM));
           
           const moisDataObj = moisData[0];
-          console.log(moisDataObj);
           const moisDataFilteredObj = {};
+
+          console.log(moisDataObj);
 
           for (const key of Object.keys(moisDataObj)) {
             let newKey = key;
             if (key === '__EMPTY_4') {
-              newKey = 'Heures_travaillées';
+              newKey = 'HT';
+            }
+            if (key === 'VILLE DE DOMICILIATION') {
+              newKey = 'PDATR';
             }
             if (key === '__EMPTY_5') {
-              newKey = 'Heures_formation';
+              newKey = 'HF';
             }
             if (key === '__EMPTY_6') {
-              newKey = 'Heures_Visite_Médicale';
+              newKey = 'HVM';
             }
             if (key === '__EMPTY_7') {
-              newKey = 'Heures_de_nuit';
-            }
-            if (key === '__EMPTY_8') {
-              newKey = 'Prime_DATR';
+              newKey = 'HDN';
             }
             if (key === '__EMPTY_9') {
-              newKey = 'Prime_de_poste';
+              newKey = '??';
+            }
+            if (key === '__EMPTY_8') {
+              newKey = 'Pposte';
             }
             if (key === '__EMPTY_10') {
-              newKey = 'Prime_HEAUME/TEV';
+              newKey = 'HEAUME/TEV';
             }
             if (key === '__EMPTY_11') {
-              newKey = 'Prime_Responsabilité';
+              newKey = 'PRespo';
             }
             if (key === '__EMPTY_12') {
-              newKey = 'Prime_Astreinte';
+              newKey = 'PAst';
             }
             if (key === '__EMPTY_13') {
-              newKey = 'Prime_Impatriation';
+              newKey = 'PImpa';
             }
             if (key === '__EMPTY_14') {
-              newKey = 'Prime_Exceptionnelle';
+              newKey = 'PExcep';
             }
             if (key === '__EMPTY_15') {
-              newKey = 'Ticket_Resto';
+              newKey = 'TResto';
             }
             if (key === '__EMPTY_19') {
-              newKey = 'Absence_Authorisé';
+              newKey = 'AbsAuth';
             }
             if (key === '__EMPTY_20') {
-              newKey = 'Absence_Non_Authorisé';
+              newKey = 'AbsNonAuth';
             }
             if (key === '__EMPTY_23') {
-              newKey = 'Heure_de_route_vehicule_service';
+              newKey = 'HderouteVS';
             }
             if (key === '__EMPTY_24') {
-              newKey = 'Indemnité_forfaitaire_frais de voyage';
+              newKey = ' FraisVoyage';
             }
             if (key === '__EMPTY_25') {
-              newKey = 'Heure_de_route_vehicule_perso';
+              newKey = 'HderouteVP';
             }
             if (key === '__EMPTY_26') {
-              newKey = 'Maintien_de_chambre';
+              newKey = 'Mchambre';
             }
             if (key === '__EMPTY_28') {
               newKey = '?';
             }
             if (key === '__EMPTY_29') {
-              newKey = 'Nombre_de_jours_GD';
+              newKey = 'NbrGD';
             }
             if (key === '__EMPTY_30') {
-              newKey = 'Nombre_de_jours_RD';
+              newKey = 'NbrRD';
             }
             if (key === '__EMPTY_31') {
               newKey = 'PD Z1';
@@ -140,11 +151,10 @@ function Paie() {
             if (key === '__EMPTY_35') {
               newKey = 'PD Z5';
             }
-            if (key.includes('EMPTY')) {
+            if (key.includes('EMPTY') || key.includes('VILLE')) {
               moisDataFilteredObj[newKey] = moisDataObj[key];
             }
           }        
-          console.log(moisDataFilteredObj);
         
           moisDataMerged[file.name] = moisDataFilteredObj;
         
@@ -167,7 +177,6 @@ function Paie() {
       }
     });
   
-    console.log('Mois fusionnés :', moisDataMerged);
   
     if (errorFound) {
       setShowModal(true);
@@ -176,7 +185,7 @@ function Paie() {
   };
   
 
-  const closeDataModal = () => { // Nouvelle fonction pour fermer la modal de données
+  const closeDataModal = () => {
     setShowDataModal(false);
   };
 
@@ -232,15 +241,33 @@ function Paie() {
           </div>
         </div>
       )}
-
 {showDataModal && (
-  <div className='modal'>
-    <div className='modal-content'>
+  <div className='modalData'>
+    <div className='modalData-content'>
       <div className='modal-header'>
         <h2>Resume</h2>
       </div>
-      <div className='modal-body' style={{ maxHeight: '400px', overflowY: 'auto' }}>
-        <pre>{JSON.stringify(jsonData, null, 2)}</pre>
+      <div className='modalData-body' style={{ overflowX: 'auto' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
+            <span style={{ width: '200px', marginRight: '10px' }}>File Name</span>
+            {Object.keys(jsonData[0].data).map((key, i) => (
+              <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
+                {key}
+              </span>
+            ))}
+          </div>
+          {jsonData.map((item, index) => (
+            <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
+              <span style={{ width: '200px', marginRight: '10px' }}>{item.fileName.slice(0, 15)}</span>
+              {Object.values(item.data).map((value, i) => (
+                <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
+                  {typeof value === 'number' && !isNaN(value) ? value.toFixed(2) : value}
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
       <div className='modal-footer'>
         <button onClick={closeDataModal}>Fermer</button>
@@ -248,6 +275,7 @@ function Paie() {
     </div>
   </div>
 )}
+
 
     </div>
   );

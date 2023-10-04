@@ -46,6 +46,16 @@
     align-items: center;
     justify-content: center;
   }
+
+  .modalData{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding-top: 20px;
+    background-color: rgba(0, 0, 0, 0.5); 
+  }
   
   .modal-content {
     background-color: red; 
@@ -53,6 +63,20 @@
     padding: 20px;
     border-radius: 8px;
     text-align: center;
+  }
+
+  .modalData-body {
+    max-height: auto;
+    overflow-y: auto;
+  }
+
+  .modalData-content {
+    background-color: white; 
+    color: black; 
+    padding: 20px;
+    border-radius: 8px;
+    text-align: left;
+
   }
   
   .modal-header h2 {
