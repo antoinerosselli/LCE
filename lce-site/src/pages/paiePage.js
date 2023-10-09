@@ -86,28 +86,28 @@ function Paie() {
               newKey = 'HDN';
             }
             if (key === '__EMPTY_9') {
-              newKey = '??';
-            }
-            if (key === '__EMPTY_8') {
-              newKey = 'Pposte';
-            }
-            if (key === '__EMPTY_10') {
               newKey = 'HEAUME/TEV';
             }
+            if (key === '__EMPTY_8') {
+              newKey = 'Prposte';
+            }
+            if (key === '__EMPTY_10') {
+              newKey = 'PrRespo';
+            }
             if (key === '__EMPTY_11') {
-              newKey = 'PRespo';
+              newKey = 'PrAst';
             }
             if (key === '__EMPTY_12') {
-              newKey = 'PAst';
+              newKey = 'PrExepti';
             }
             if (key === '__EMPTY_13') {
-              newKey = 'PImpa';
+              newKey = 'TicketResto';
             }
             if (key === '__EMPTY_14') {
-              newKey = 'PExcep';
+              newKey = 'IndemFRepas';
             }
             if (key === '__EMPTY_15') {
-              newKey = 'TResto';
+              newKey = 'HIntemperies';
             }
             if (key === '__EMPTY_19') {
               newKey = 'AbsAuth';
@@ -151,8 +151,15 @@ function Paie() {
             if (key === '__EMPTY_35') {
               newKey = 'PD Z5';
             }
-            if (key.includes('EMPTY') || key.includes('VILLE')) {
+            if (key.includes('EMPTY') || key.includes('DOMICILIATION')) {
               moisDataFilteredObj[newKey] = moisDataObj[key];
+            }
+            else {
+              if (!key.includes('NOM'))
+              {
+                newKey = "PrImpa";
+                moisDataFilteredObj[newKey] = moisDataObj[key];
+              }
             }
           }        
         
@@ -249,7 +256,7 @@ function Paie() {
       </div>
       <div className='modalData-body' style={{ overflowX: 'auto' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px', fontWeight:'bolder' }}>
             <span style={{ width: '200px', marginRight: '10px' }}>File Name</span>
             {Object.keys(jsonData[0].data).map((key, i) => (
               <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
