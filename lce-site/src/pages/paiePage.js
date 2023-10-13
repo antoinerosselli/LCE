@@ -60,7 +60,19 @@ function Paie() {
           const listeSemaine = [];
           var SemaineReduc = [];
           var SemaineReducFilter = [];
-          
+
+          var fn = file.name;
+          var fnSpace = fn.split(" ");
+          var nom = fnSpace[0];
+          var hsoupas = false;
+          var TH = [];
+
+          console.log(nom);
+          console.log(data[2][nom]);
+          if (data[2][nom] == 'CADRE')
+          {
+            hsoupas = true;
+          }
           let index = 10;
 
           while (index < LastData.length && !/MOIS/i.test(LastData[index].NOM)) {
@@ -79,6 +91,7 @@ function Paie() {
 
           let NBJPS = 0;
           var WhatADay;
+          var NeedToCheck = false;
 
           const targetValue = "TOTAL HEURES SEMAINE";
 
@@ -86,7 +99,7 @@ function Paie() {
             const item = listeSemaine[i];
             if (item && item.__EMPTY == targetValue) {
               WhatADay = listeSemaine[i - 1].__EMPTY;
-              if (WhatADay != "D")
+              if (WhatADay != "V" && WhatADay != "S" && WhatADay != "D")
               {
                 console.log("Semaine fin non complete");
                 SemaineReduc = listeSemaine[i];
@@ -102,6 +115,12 @@ function Paie() {
             }
             NBJPS++;
           }
+          
+          if (NBJPS <= 2)
+          {
+            NeedToCheck = true;
+          }
+
           console.log("NBJPS = " + NBJPS);
           
           for (const key of Object.keys(SemaineReduc)) {
@@ -206,7 +225,6 @@ function Paie() {
 
           if (NBJPS < 7)
           {
-            console.log(listeSemaineLast);
             TargetSemaine = listeSemaineLast[listeSemaineLast.length - 1];
             for (const key of Object.keys(TargetSemaine)) {
               let newKey = key;
@@ -303,15 +321,93 @@ function Paie() {
               }
             }      
           }
+          console.log("SEMAINE DETAIL : ");
+          var HeureSup = 0;
+          var Heure25 = 0;
+          var Heure50 = 0;
+          var HeureCar = 0;
+          console.log("DÉTECTION DU BESOIN DE SEMAINE DERNIERE")
+          if (NeedToCheck == true) {
+            var NbrOfWeek = 0;
+            console.log(listeSemaineLast);
+            for (const day of listeSemaineLast) {
+              if (day.__EMPTY == 'TOTAL HEURES SEMAINE') {
+                NbrOfWeek += 1;
+              }
+            }
+            for (const day of listeSemaineLast) {
+              if (day.__EMPTY == 'TOTAL HEURES SEMAINE' && NbrOfWeek > 1) {
+                NbrOfWeek -= 1;
+              }
+              if (NbrOfWeek < 2)
+              {
+                console.log(day.__EMPTY);
+                if (day.hasOwnProperty('__EMPTY_4') && day.__EMPTY != 'TOTAL HEURES SEMAINE') {
+                  HeureSup += day.__EMPTY_4;
+                } 
+                if (day.hasOwnProperty('Mois') || day.hasOwnProperty(selectedMonth) || day.hasOwnProperty('__EMPTY_16')){
+                  HeureSup = 7;
+                }
+              }
+            }
+          }
+          for (const day of listeSemaine)
+          {
+            console.log("ACTUAL DAY");
+            console.log(day);
+            if (day.hasOwnProperty('__EMPTY_4') && day.__EMPTY != 'TOTAL HEURES SEMAINE') {
+              HeureSup += day.__EMPTY_4;
+              console.log("normal day");
+            }
+            if (day.hasOwnProperty('Mois') || day.hasOwnProperty(sheetName) || day.hasOwnProperty('__EMPTY_16') ){
+              HeureSup += 7;
+              console.log("super day");
+            }
+            if (day.__EMPTY == 'TOTAL HEURES SEMAINE'){
+              var HTMP = HeureSup;
+              if (HTMP < 35){
+                if (day.hasOwnProperty('__EMPTY_23')){
+                  HeureCar = day.__EMPTY_23;
+                  while (HTMP < 35 || HeureCar > 0){
+                    HTMP += 0.5;
+                    HeureCar -= 0.5; 
+                  }
+                }  
+              }
+              else if (HTMP > 35) {
+                while(HTMP > 43) {
+                  HTMP -= 0.5;
+                  Heure50 += 0.5;
+                }
+                while(HTMP > 35){
+                  HTMP -= 0.5;
+                  Heure25 += 0.5;
+                }
+              }
+              console.log("ppppppppp");
+              console.log(HeureSup);
+              console.log(Heure25);
+              console.log(Heure50);    
+              HeureSup = 0;
+              HeureCar = 0;
+            }
+          }
+          if (hsoupas == true)
+          {
+            Heure25 = 0;
+            Heure50 = 0;
+          }
+          console.log(Heure25);
+          console.log(Heure50);
+          console.log("--------");
 
-          console.log(TargetSemaineFilter);
-      
+          TH = {"HS_25%": Heure25, "HS_50%": Heure50};
+
           const moisData = data.filter((item) => /MOIS/i.test(item.NOM));
           
           const moisDataObj = moisData[0];
           const moisDataFilteredObj = {};
 
-          console.log(moisDataObj);
 
           for (const key of Object.keys(moisDataObj)) {
             let newKey = key;
@@ -426,9 +522,9 @@ function Paie() {
               resultatFinal[key] = resultat[key];
             }
           }
-          
+
           if (Object.keys(resultatFinal).length > 0) {
-            resolve({ fileName: file.name, data: resultatFinal, extra: TargetSemaineFilter});
+            resolve({ fileName: file.name, data: resultatFinal, extra: TargetSemaineFilter, HS:TH});
           } else {
             resolve(null);
           }
@@ -520,6 +616,11 @@ function Paie() {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px', fontWeight:'bolder' }}>
             <span style={{ width: '200px', marginRight: '10px' }}>File Name</span>
+            {Object.keys(jsonData[0].HS).map((key, i) => (
+              <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
+                {key}
+              </span>
+            ))}
             {Object.keys(jsonData[0].data).map((key, i) => (
               <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
                 {key}
@@ -530,6 +631,11 @@ function Paie() {
           <div key={index}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
               <span style={{ width: '200px', marginRight: '10px' }}>{item.fileName.slice(0, 15)}</span>
+              {Object.values(item.HS).map((value, i) => (
+                <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
+                  {typeof value === 'number' && !isNaN(value) ? value.toFixed(2) : value}
+                </span>
+              ))}
               {Object.values(item.data).map((value, i) => (
                 <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
                   {typeof value === 'number' && !isNaN(value) ? value.toFixed(2) : value}
