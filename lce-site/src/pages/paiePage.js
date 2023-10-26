@@ -37,6 +37,7 @@ function Paie() {
     setErrorMessage('');
   };
 
+
   const handleValidation = () => {
     let errorFound = false;
     const moisDataMerged = {};
@@ -58,6 +59,7 @@ function Paie() {
 
           const listeSemaineLast = [];
           const listeSemaine = [];
+
           var SemaineReduc = [];
           var SemaineReducFilter = [];
 
@@ -67,8 +69,6 @@ function Paie() {
           var hsoupas = false;
           var TH = [];
 
-          console.log(nom);
-          console.log(data[2][nom]);
           if (data[2][nom] == 'CADRE')
           {
             hsoupas = true;
@@ -87,7 +87,6 @@ function Paie() {
             index++;
           }
 
-          console.log(listeSemaine);
 
           let NBJPS = 0;
           var WhatADay;
@@ -101,12 +100,12 @@ function Paie() {
               WhatADay = listeSemaine[i - 1].__EMPTY;
               if (WhatADay != "V" && WhatADay != "S" && WhatADay != "D")
               {
-                console.log("Semaine fin non complete");
                 SemaineReduc = listeSemaine[i];
               }    
               break;
             }
           }
+
 
           for (let i = 0; i < listeSemaine.length; i++) {
             const item = listeSemaine[i];
@@ -116,29 +115,28 @@ function Paie() {
             NBJPS++;
           }
           
-          if (NBJPS <= 2)
+          if (NBJPS != 7)
           {
             NeedToCheck = true;
+            console.log("check");
           }
-
-          console.log("NBJPS = " + NBJPS);
           
           for (const key of Object.keys(SemaineReduc)) {
             let newKey = key;
             if (key === '__EMPTY_4') {
-              newKey = 'HT';
+              delete SemaineReduc[key];
             }
             if (key === 'VILLE DE DOMICILIATION') {
               newKey = 'PDATR';
             }
             if (key === '__EMPTY_5') {
-              newKey = 'HF';
+              delete SemaineReduc[key];
             }
             if (key === '__EMPTY_6') {
-              newKey = 'HVM';
+              delete SemaineReduc[key];
             }
             if (key === '__EMPTY_7') {
-              newKey = 'HDN';
+              delete SemaineReduc[key];
             }
             if (key === '__EMPTY_9') {
               newKey = 'HEAUME/TEV';
@@ -171,13 +169,13 @@ function Paie() {
               newKey = 'AbsNonAuth';
             }
             if (key === '__EMPTY_23') {
-              newKey = 'HderouteVS';
+              delete SemaineReduc[key];
             }
             if (key === '__EMPTY_24') {
               newKey = ' FraisVoyage';
             }
             if (key === '__EMPTY_25') {
-              newKey = 'HderouteVP';
+              delete SemaineReduc[key];
             }
             if (key === '__EMPTY_26') {
               newKey = 'Mchambre';
@@ -218,11 +216,8 @@ function Paie() {
             }
           }     
 
-          console.log(SemaineReducFilter);
-
           var TargetSemaine = {};
           TargetSemaineFilter = {};
-
           if (NBJPS < 7)
           {
             TargetSemaine = listeSemaineLast[listeSemaineLast.length - 1];
@@ -232,7 +227,7 @@ function Paie() {
                 newKey = 'HT';
               }
               if (key === 'VILLE DE DOMICILIATION') {
-                newKey = 'PDATR';
+                delete TargetSemaine[key];
               }
               if (key === '__EMPTY_5') {
                 newKey = 'HF';
@@ -244,73 +239,74 @@ function Paie() {
                 newKey = 'HDN';
               }
               if (key === '__EMPTY_9') {
-                newKey = 'HEAUME/TEV';
+                delete TargetSemaine[key];
               }
               if (key === '__EMPTY_8') {
-                newKey = 'Prposte';
+                delete TargetSemaine[key];
               }
               if (key === '__EMPTY_10') {
-                newKey = 'PrRespo';
+                delete TargetSemaine[key];
               }
               if (key === '__EMPTY_11') {
-                newKey = 'PrAst';
+                delete TargetSemaine[key];
               }
               if (key === '__EMPTY_12') {
-                newKey = 'PrExepti';
+                delete TargetSemaine[key];
               }
               if (key === '__EMPTY_13') {
-                newKey = 'TicketResto';
+                delete TargetSemaine[key];
               }
               if (key === '__EMPTY_14') {
-                newKey = 'IndemFRepas';
+                delete TargetSemaine[key];
               }
               if (key === '__EMPTY_15') {
-                newKey = 'HIntemperies';
+                delete TargetSemaine[key];
               }
               if (key === '__EMPTY_19') {
-                newKey = 'AbsAuth';
+                delete TargetSemaine[key];
               }
               if (key === '__EMPTY_20') {
-                newKey = 'AbsNonAuth';
+                delete TargetSemaine[key];
               }
               if (key === '__EMPTY_23') {
                 newKey = 'HderouteVS';
               }
               if (key === '__EMPTY_24') {
-                newKey = ' FraisVoyage';
+                delete TargetSemaine[key];
               }
               if (key === '__EMPTY_25') {
                 newKey = 'HderouteVP';
               }
               if (key === '__EMPTY_26') {
-                newKey = 'Mchambre';
+                delete TargetSemaine[key];
               }
               if (key === '__EMPTY_28') {
-                newKey = '?';
+                delete TargetSemaine[key];
               }
               if (key === '__EMPTY_29') {
-                newKey = 'NbrGD';
+                delete TargetSemaine[key];
               }
               if (key === '__EMPTY_30') {
-                newKey = 'NbrRD';
+                delete TargetSemaine[key];
               }
               if (key === '__EMPTY_31') {
-                newKey = 'PD Z1';
+                delete TargetSemaine[key];                
               }
               if (key === '__EMPTY_32') {
-                newKey = 'PD Z2';
+                delete TargetSemaine[key];                
               }
               if (key === '__EMPTY_33') {
-                newKey = 'PD Z3';
+                delete TargetSemaine[key];                
               }
               if (key === '__EMPTY_34') {
-                newKey = 'PD Z4';
+                delete TargetSemaine[key];                
               }
               if (key === '__EMPTY_35') {
-                newKey = 'PD Z5';
+                delete TargetSemaine[key];                
               }
               if (key.includes('EMPTY') || key.includes('DOMICILIATION')) {
                 TargetSemaineFilter[newKey] = TargetSemaine[key];
+                delete TargetSemaine[newKey];
               }
               else {
                 if (!key.includes('NOM'))
@@ -321,15 +317,16 @@ function Paie() {
               }
             }      
           }
-          console.log("SEMAINE DETAIL : ");
+          delete TargetSemaine["PrImpa"];
+
+          console.log(TargetSemaineFilter);
+
           var HeureSup = 0;
           var Heure25 = 0;
           var Heure50 = 0;
           var HeureCar = 0;
-          console.log("DÉTECTION DU BESOIN DE SEMAINE DERNIERE")
           if (NeedToCheck == true) {
             var NbrOfWeek = 0;
-            console.log(listeSemaineLast);
             for (const day of listeSemaineLast) {
               if (day.__EMPTY == 'TOTAL HEURES SEMAINE') {
                 NbrOfWeek += 1;
@@ -341,7 +338,6 @@ function Paie() {
               }
               if (NbrOfWeek < 2)
               {
-                console.log(day.__EMPTY);
                 if (day.hasOwnProperty('__EMPTY_4') && day.__EMPTY != 'TOTAL HEURES SEMAINE') {
                   HeureSup += day.__EMPTY_4;
                 } 
@@ -353,15 +349,19 @@ function Paie() {
           }
           for (const day of listeSemaine)
           {
-            console.log("ACTUAL DAY");
-            console.log(day);
             if (day.hasOwnProperty('__EMPTY_4') && day.__EMPTY != 'TOTAL HEURES SEMAINE') {
               HeureSup += day.__EMPTY_4;
-              console.log("normal day");
+            }
+            if (day.hasOwnProperty('__EMPTY_5') && day.__EMPTY != 'TOTAL HEURES SEMAINE')
+            {
+              HeureSup += day.__EMPTY_5;
+            }
+            if (day.hasOwnProperty('__EMPTY_6') && day.__EMPTY != 'TOTAL HEURES SEMAINE')
+            {
+              HeureSup += day.__EMPTY_6;
             }
             if (day.hasOwnProperty('Mois') || day.hasOwnProperty(sheetName) || day.hasOwnProperty('__EMPTY_16') ){
               HeureSup += 7;
-              console.log("super day");
             }
             if (day.__EMPTY == 'TOTAL HEURES SEMAINE'){
               var HTMP = HeureSup;
@@ -384,10 +384,6 @@ function Paie() {
                   Heure25 += 0.5;
                 }
               }
-              console.log("ppppppppp");
-              console.log(HeureSup);
-              console.log(Heure25);
-              console.log(Heure50);    
               HeureSup = 0;
               HeureCar = 0;
             }
@@ -397,10 +393,6 @@ function Paie() {
             Heure25 = 0;
             Heure50 = 0;
           }
-          console.log(Heure25);
-          console.log(Heure50);
-          console.log("--------");
-
           TH = {"HS_25%": Heure25, "HS_50%": Heure50};
 
           const moisData = data.filter((item) => /MOIS/i.test(item.NOM));
@@ -523,6 +515,21 @@ function Paie() {
             }
           }
 
+          var HRoute = resultatFinal["HderouteVS"] + resultatFinal["HderouteVP"];
+          var HTT = resultatFinal["HT"] + resultatFinal["HF"] + resultatFinal["HVM"];
+
+          delete resultatFinal["HT"];
+          delete resultatFinal["HF"];
+          delete resultatFinal["HVM"];
+
+          delete resultatFinal["HderouteVS"];
+          delete resultatFinal["HderouteVP"];
+
+          console.log("!!!!!");
+          TH["HTT"] = HTT
+          TH["HRoute"] = HRoute;
+          console.log("!!!!!");
+          
           if (Object.keys(resultatFinal).length > 0) {
             resolve({ fileName: file.name, data: resultatFinal, extra: TargetSemaineFilter, HS:TH});
           } else {
@@ -536,7 +543,6 @@ function Paie() {
   
     Promise.all(promises).then((results) => {
       const mergedData = results.filter((result) => result !== null);
-      console.log(mergedData);
       if (mergedData.length > 0) {
         setJsonData(mergedData);
         setShowDataModal(true);
@@ -558,6 +564,7 @@ function Paie() {
     const selectedMonthValue = event.target.value.toUpperCase();
     setSelectedMonth(selectedMonthValue);
   };
+
 
   return (
     <div className='paie'>
@@ -610,7 +617,7 @@ function Paie() {
   <div className='modalData'>
     <div className='modalData-content'>
       <div className='modal-header'>
-        <h2>Resume</h2>
+        <h2>Resume pour le mois de {selectedMonth}</h2>
       </div>
       <div className='modalData-body' style={{ overflowX: 'auto', overflowY: 'auto' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -628,22 +635,22 @@ function Paie() {
             ))}
           </div>
           {jsonData.map((item, index) => (
-          <div key={index}>
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-              <span style={{ width: '200px', marginRight: '10px' }}>{item.fileName.slice(0, 15)}</span>
-              {Object.values(item.HS).map((value, i) => (
-                <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
-                  {typeof value === 'number' && !isNaN(value) ? value.toFixed(2) : value}
-                </span>
-              ))}
-              {Object.values(item.data).map((value, i) => (
-                <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
-                  {typeof value === 'number' && !isNaN(value) ? value.toFixed(2) : value}
-                </span>
-              ))}
+            <div key={index} style={{ color: index % 2 === 0 ? 'blue' : 'orange', fontWeight: "bolder" }}>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
+                <span style={{ width: '200px', marginRight: '10px' }}>{item.fileName.slice(0, 15)}</span>
+                {Object.values(item.HS).map((value, i) => (
+                  <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
+                    {typeof value === 'number' && !isNaN(value) ? value.toFixed(2) : value}
+                  </span>
+                ))}
+                {Object.values(item.data).map((value, i) => (
+                  <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
+                    {typeof value === 'number' && !isNaN(value) ? value.toFixed(2) : value}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
         </div>
       </div>
       <div className='modal-footer'>
