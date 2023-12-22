@@ -37,6 +37,13 @@ function Paie() {
     setErrorMessage('');
   };
 
+  function removeAccents(str) {
+    return str
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toUpperCase();
+  }
+  
 
   const handleValidation = () => {
     let errorFound = false;
@@ -48,12 +55,14 @@ function Paie() {
         reader.onload = (e) => {
           const fileContent = e.target.result;
           const workbook = XLSX.read(fileContent, { type: 'binary' });
+
+          console.log(workbook);
         
-          const sheetName = workbook.SheetNames[selectedMonth];
-          const lastMonth = workbook.SheetNames[selectedMonth - 1];
-          const worksheet = workbook.Sheets[sheetName];
-          const worksheetLast = workbook.Sheets[lastMonth];
+          const worksheet = workbook.Sheets[removeAccents(getMonthNameFromNumber(selectedMonth).toUpperCase())];
+          const worksheetLast = workbook.Sheets[removeAccents(getMonthNameFromNumber(selectedMonth - 1).toUpperCase())];
           
+          console.log(removeAccents(getMonthNameFromNumber(selectedMonth).toUpperCase()));
+
           const data = XLSX.utils.sheet_to_json(worksheet);
           const LastData = XLSX.utils.sheet_to_json(worksheetLast);
 
@@ -118,7 +127,6 @@ function Paie() {
           if (NBJPS != 7)
           {
             NeedToCheck = true;
-            console.log("check");
           }
           
           for (const key of Object.keys(SemaineReduc)) {
@@ -319,8 +327,6 @@ function Paie() {
           }
           delete TargetSemaine["PrImpa"];
 
-          console.log(TargetSemaineFilter);
-
           var HeureSup = 0;
           var Heure25 = 0;
           var Heure50 = 0;
@@ -360,7 +366,7 @@ function Paie() {
             {
               HeureSup += day.__EMPTY_6;
             }
-            if (day.hasOwnProperty('Mois') || day.hasOwnProperty(sheetName) || day.hasOwnProperty('__EMPTY_16') ){
+            if (day.hasOwnProperty('Mois') || day.hasOwnProperty(removeAccents(getMonthNameFromNumber(selectedMonth).toUpperCase())) || day.hasOwnProperty('__EMPTY_16') ){
               HeureSup += 7;
             }
             if (day.__EMPTY == 'TOTAL HEURES SEMAINE'){
@@ -525,10 +531,8 @@ function Paie() {
           delete resultatFinal["HderouteVS"];
           delete resultatFinal["HderouteVP"];
 
-          console.log("!!!!!");
           TH["HTT"] = HTT
           TH["HRoute"] = HRoute;
-          console.log("!!!!!");
           
           if (Object.keys(resultatFinal).length > 0) {
             resolve({ fileName: file.name, data: resultatFinal, extra: TargetSemaineFilter, HS:TH});
@@ -555,7 +559,6 @@ function Paie() {
     }
   };
   
-
   const closeDataModal = () => {
     setShowDataModal(false);
   };
@@ -564,6 +567,29 @@ function Paie() {
     const selectedMonthValue = event.target.value.toUpperCase();
     setSelectedMonth(selectedMonthValue);
   };
+
+  function getMonthNameFromNumber(monthNumber) {
+    const mois = [
+      'Janvier',
+      'Février',
+      'Mars',
+      'Avril',
+      'Mai',
+      'Juin',
+      'Juillet',
+      'Août',
+      'Septembre',
+      'Octobre',
+      'Novembre',
+      'Décembre',
+    ];
+  
+    if (monthNumber >= 1 && monthNumber <= 12) {
+      return mois[monthNumber - 1];
+    } else {
+      return 'Mois invalide';
+    }
+  }
 
 
   return (
