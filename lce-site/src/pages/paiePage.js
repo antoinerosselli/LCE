@@ -335,11 +335,47 @@ function Paie() {
           var HeureCar = 0;
 
           if (NeedToCheck == true) {
-            var NbrOfWeek = 0;
-            for (const day of listeSemaineLast) {
-              if (day.__EMPTY == 'TOTAL HEURES SEMAINE') {
-                NbrOfWeek += 1;
+            console.log(TargetSemaineFilter);
+            var tmpls = TargetSemaineFilter;
+            if (tmpls.hasOwnProperty('__EMPTY_4') && tmpls.__EMPTY != 'TOTAL HEURES SEMAINE') {
+              HeureSup += tmpls.__EMPTY_4;
+            }
+            if (tmpls.hasOwnProperty('__EMPTY_5') && tmpls.__EMPTY != 'TOTAL HEURES SEMAINE')
+            {
+              HeureSup += tmpls.__EMPTY_5;
+            }
+            if (tmpls.hasOwnProperty('__EMPTY_6') && tmpls.__EMPTY != 'TOTAL HEURES SEMAINE')
+            {
+              HeureSup += tmpls.__EMPTY_6;
+            }
+            if (tmpls.hasOwnProperty('Mois') || tmpls.hasOwnProperty(removeAccents(getMonthNameFromNumber(selectedMonth).toUpperCase())) || tmpls.hasOwnProperty('__EMPTY_16') ){
+              HeureSup += 7;
+            }
+            if (tmpls.__EMPTY == 'TOTAL HEURES SEMAINE'){
+              var HTMP = HeureSup;
+              if (HTMP < 35){
+                if (tmpls.hasOwnProperty('__EMPTY_23')){
+                  HeureCar = tmpls.__EMPTY_23;
+                  HeureCar += tmpls.__EMPTY_25;
+                  while (HTMP < 35 && HeureCar > 0){
+                    HTMP += 0.5;
+                    HeureCar -= 0.5;
+                  }
+                }
               }
+              else if (HTMP > 35) {
+                while(HTMP > 43) {
+                  HTMP -= 0.5;
+                  Heure50 += 0.5;
+                }
+                while(HTMP > 35){
+                  HTMP -= 0.5;
+                  Heure25 += 0.5;
+                }
+              }
+              HeureSup = 0;
+              HeureRealCar += HeureCar;
+              HeureCar = 0;
             }
           }
           for (const day of listeSemaine)
@@ -367,10 +403,9 @@ function Paie() {
                   HeureCar += day.__EMPTY_25;
                   while (HTMP < 35 && HeureCar > 0){
                     HTMP += 0.5;
-                    HeureCar -= 0.5; 
-                    console.log("Compute");
+                    HeureCar -= 0.5;
                   }
-                }  
+                }
               }
               else if (HTMP > 35) {
                 while(HTMP > 43) {
@@ -513,12 +548,6 @@ function Paie() {
             }
           }
 
-          console.log("Before Send");
-          console.log('Hroutevs : ',resultatFinal["HderouteVS"]);
-          console.log('Hroutevp : ',resultatFinal["HderouteVP"]);
-          console.log('ht : ',resultatFinal["HT"]);
-          console.log('hf : ',resultatFinal["HF"]);
-          console.log('hvm : ',resultatFinal["HVM"]);
 
           var HRoute = HeureRealCar;
           var HTT = resultatFinal["HT"] + resultatFinal["HF"] + resultatFinal["HVM"];
