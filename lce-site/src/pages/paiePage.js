@@ -10,6 +10,8 @@ function Paie() {
   const [selectedMonth, setSelectedMonth] = useState('');
   const [validFiles, setValidFiles] = useState([]);
   const [jsonData, setJsonData] = useState({}); 
+  const [isLoading, setIsLoading] = useState(false);
+
   const fileInputRef = useRef(null);
 
   const handleFileImport = (event) => {
@@ -46,6 +48,7 @@ function Paie() {
   
 
   const handleValidation = () => {
+    setIsLoading(true); // Démarrez l'indicateur de chargement
     let errorFound = false;
     const moisDataMerged = {};
     const promises = validFiles.map((file) => {
@@ -550,11 +553,13 @@ function Paie() {
       if (mergedData.length > 0) {
         setJsonData(mergedData);
         setShowDataModal(true);
+        setIsLoading(false); 
       }
     });
   
     if (errorFound) {
       setShowModal(true);
+      setIsLoading(false); 
       setErrorMessage(`Le mois "${selectedMonth}" n'est pas présent dans un ou plusieurs fichiers.`);
     }
   };
@@ -615,7 +620,14 @@ function Paie() {
       </div>
 
       <div className='arround'>
-        <input type='file' onChange={handleFileImport} multiple ref={fileInputRef} />
+        {isLoading ? (
+          <div className="loading-indicator">
+            <img style={{ width: '300px', height: '300px' }}src="coffee-loading.gif" alt="Chargement en cours..." />
+          </div>
+        ) : (
+          // Votre contenu normal de la classe 'arround' ici
+          <input type='file' onChange={handleFileImport} multiple ref={fileInputRef} />
+        )}
       </div>
 
       {validFiles.length > 0 && (
@@ -623,7 +635,6 @@ function Paie() {
           <button className='button-validation' onClick={handleValidation}>Valider</button>
         </div>
       )}
-
       {showModal && (
         <div className='modal'>
           <div className='modal-content'>
