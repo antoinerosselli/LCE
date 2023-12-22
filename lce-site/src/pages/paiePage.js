@@ -11,6 +11,7 @@ function Paie() {
   const [validFiles, setValidFiles] = useState([]);
   const [jsonData, setJsonData] = useState({}); 
   const [isLoading, setIsLoading] = useState(false);
+  const [HeureVoiture, setHVoiture] = useState(false);
 
   const fileInputRef = useRef(null);
 
@@ -59,13 +60,9 @@ function Paie() {
           const fileContent = e.target.result;
           const workbook = XLSX.read(fileContent, { type: 'binary' });
 
-          console.log(workbook);
-        
           const worksheet = workbook.Sheets[removeAccents(getMonthNameFromNumber(selectedMonth).toUpperCase())];
           const worksheetLast = workbook.Sheets[removeAccents(getMonthNameFromNumber(selectedMonth - 1).toUpperCase())];
           
-          console.log(removeAccents(getMonthNameFromNumber(selectedMonth).toUpperCase()));
-
           const data = XLSX.utils.sheet_to_json(worksheet);
           const LastData = XLSX.utils.sheet_to_json(worksheetLast);
 
@@ -328,31 +325,20 @@ function Paie() {
               }
             }      
           }
+
           delete TargetSemaine["PrImpa"];
 
           var HeureSup = 0;
           var Heure25 = 0;
           var Heure50 = 0;
+          var HeureRealCar = 0;
           var HeureCar = 0;
+
           if (NeedToCheck == true) {
             var NbrOfWeek = 0;
             for (const day of listeSemaineLast) {
               if (day.__EMPTY == 'TOTAL HEURES SEMAINE') {
                 NbrOfWeek += 1;
-              }
-            }
-            for (const day of listeSemaineLast) {
-              if (day.__EMPTY == 'TOTAL HEURES SEMAINE' && NbrOfWeek > 1) {
-                NbrOfWeek -= 1;
-              }
-              if (NbrOfWeek < 2)
-              {
-                if (day.hasOwnProperty('__EMPTY_4') && day.__EMPTY != 'TOTAL HEURES SEMAINE') {
-                  HeureSup += day.__EMPTY_4;
-                } 
-                if (day.hasOwnProperty('Mois') || day.hasOwnProperty(selectedMonth) || day.hasOwnProperty('__EMPTY_16')){
-                  HeureSup = 7;
-                }
               }
             }
           }
@@ -372,14 +358,17 @@ function Paie() {
             if (day.hasOwnProperty('Mois') || day.hasOwnProperty(removeAccents(getMonthNameFromNumber(selectedMonth).toUpperCase())) || day.hasOwnProperty('__EMPTY_16') ){
               HeureSup += 7;
             }
+
             if (day.__EMPTY == 'TOTAL HEURES SEMAINE'){
               var HTMP = HeureSup;
               if (HTMP < 35){
                 if (day.hasOwnProperty('__EMPTY_23')){
                   HeureCar = day.__EMPTY_23;
-                  while (HTMP < 35 || HeureCar > 0){
+                  HeureCar += day.__EMPTY_25;
+                  while (HTMP < 35 && HeureCar > 0){
                     HTMP += 0.5;
                     HeureCar -= 0.5; 
+                    console.log("Compute");
                   }
                 }  
               }
@@ -394,6 +383,7 @@ function Paie() {
                 }
               }
               HeureSup = 0;
+              HeureRealCar += HeureCar;
               HeureCar = 0;
             }
           }
@@ -408,7 +398,6 @@ function Paie() {
           
           const moisDataObj = moisData[0];
           const moisDataFilteredObj = {};
-
 
           for (const key of Object.keys(moisDataObj)) {
             let newKey = key;
@@ -524,7 +513,14 @@ function Paie() {
             }
           }
 
-          var HRoute = resultatFinal["HderouteVS"] + resultatFinal["HderouteVP"];
+          console.log("Before Send");
+          console.log('Hroutevs : ',resultatFinal["HderouteVS"]);
+          console.log('Hroutevp : ',resultatFinal["HderouteVP"]);
+          console.log('ht : ',resultatFinal["HT"]);
+          console.log('hf : ',resultatFinal["HF"]);
+          console.log('hvm : ',resultatFinal["HVM"]);
+
+          var HRoute = HeureRealCar;
           var HTT = resultatFinal["HT"] + resultatFinal["HF"] + resultatFinal["HVM"];
 
           delete resultatFinal["HT"];
