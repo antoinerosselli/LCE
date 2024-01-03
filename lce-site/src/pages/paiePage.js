@@ -622,6 +622,8 @@ function Paie() {
   }
 
 
+
+
   return (
     <div className='paie'>
       <div className='title-n'>Fiche de paie</div>
@@ -636,30 +638,30 @@ function Paie() {
           <option value='5'>Mai</option>
           <option value='6'>Juin</option>
           <option value='7'>Juillet</option>
-          <option value='8'>Aout</option>
+          <option value='8'>Août</option>
           <option value='9'>Septembre</option>
           <option value='10'>Octobre</option>
           <option value='11'>Novembre</option>
-          <option value='12'>Decembre</option>
+          <option value='12'>Décembre</option>
         </select>
       </div>
-
+  
       <div className='arround'>
         {isLoading ? (
           <div className="loading-indicator">
-            <img style={{ width: '300px', height: '300px' }}src="coffee-loading.gif" alt="Chargement en cours..." />
+            <img style={{ width: '300px', height: '300px' }} src="coffee-loading.gif" alt="Chargement en cours..." />
           </div>
         ) : (
-          // Votre contenu normal de la classe 'arround' ici
           <input type='file' onChange={handleFileImport} multiple ref={fileInputRef} />
         )}
       </div>
-
+  
       {validFiles.length > 0 && (
         <div>
           <button className='button-validation' onClick={handleValidation}>Valider</button>
         </div>
       )}
+  
       {showModal && (
         <div className='modal'>
           <div className='modal-content'>
@@ -675,56 +677,54 @@ function Paie() {
           </div>
         </div>
       )}
-{showDataModal && (
-  <div className='modalData'>
-    <div className='modalData-content'>
-      <div className='modal-header'>
-        <h2>Resume pour le mois de {selectedMonth}</h2>
-      </div>
-      <div className='modalData-body' style={{ overflowX: 'auto', overflowY: 'auto' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px', fontWeight:'bolder' }}>
-            <span style={{ width: '200px', marginRight: '10px' }}>File Name</span>
-            {Object.keys(jsonData[0].HS).map((key, i) => (
-              <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
-                {key}
-              </span>
-            ))}
-            {Object.keys(jsonData[0].data).map((key, i) => (
-              <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
-                {key}
-              </span>
-            ))}
-          </div>
-          {jsonData.map((item, index) => (
-            <div key={index} style={{ color: index % 2 === 0 ? 'blue' : 'orange', fontWeight: "bolder" }}>
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-                <span style={{ width: '200px', marginRight: '10px' }}>{item.fileName.slice(0, 15)}</span>
-                {Object.values(item.HS).map((value, i) => (
-                  <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
-                    {typeof value === 'number' && !isNaN(value) ? value.toFixed(2) : value}
-                  </span>
-                ))}
-                {Object.values(item.data).map((value, i) => (
-                  <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
-                    {typeof value === 'number' && !isNaN(value) ? value.toFixed(2) : value}
-                  </span>
+  
+      {showDataModal && (
+        <div className='modalData'>
+          <div className='modalData-content'>
+            <div className='modal-header'>
+              <h2>Résumé pour le mois de {selectedMonth}</h2>
+            </div>
+            <div className='modalData-body' style={{ overflowX: 'auto', overflowY: 'auto' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px', fontWeight:'bolder' }}>
+                  <span style={{ width: '200px', marginRight: '10px', position: 'sticky', left: 0, backgroundColor: 'white', zIndex: 1 }}>Nom du fichier</span>
+                  {Object.keys(jsonData[0].HS).map((key, i) => (
+                    <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
+                      {key}
+                    </span>
+                  ))}
+                  {Object.keys(jsonData[0].data).map((key, i) => (
+                    <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
+                      {key}
+                    </span>
+                  ))}
+                </div>
+                {jsonData.map((item, index) => (
+                  <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '5px', color: index % 2 === 0 ? 'blue' : 'orange', fontWeight: "bolder" }}>
+                    <span style={{ width: '200px', marginRight: '10px', position: 'sticky', left: 0, backgroundColor: 'white', zIndex: 1 }}>{item.fileName.slice(0, 15)}</span>
+                    {Object.values(item.HS).map((value, i) => (
+                      <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
+                        {typeof value === 'number' && !isNaN(value) ? value.toFixed(2) : value}
+                      </span>
+                    ))}
+                    {Object.values(item.data).map((value, i) => (
+                      <span key={i} style={{ width: '50px', textAlign: 'center', marginRight: '80px' }}>
+                        {typeof value === 'number' && !isNaN(value) ? value.toFixed(2) : value}
+                      </span>
+                    ))}
+                  </div>
                 ))}
               </div>
             </div>
-          ))}
+            <div className='modal-footer'>
+              <button onClick={closeDataModal}>Fermer</button>
+            </div>
+          </div>
         </div>
-      </div>
-      <div className='modal-footer'>
-        <button onClick={closeDataModal}>Fermer</button>
-      </div>
-    </div>
-  </div>
-)}
-
-
+      )}
     </div>
   );
+  
 }
 
 export default Paie;
