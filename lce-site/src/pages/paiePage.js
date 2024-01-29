@@ -134,7 +134,7 @@ function Paie() {
             if (key === '__EMPTY_4') {
               delete SemaineReduc[key];
             }
-            if (key === 'VILLE DE DOMICILIATION') {
+            if (key === 'VILLE DE DOMICILIATION ') {
               newKey = 'PDATR';
             }
             if (key === '__EMPTY_5') {
@@ -234,7 +234,7 @@ function Paie() {
               if (key === '__EMPTY_4') {
                 newKey = 'HT';
               }
-              if (key === 'VILLE DE DOMICILIATION') {
+              if (key === 'VILLE DE DOMICILIATION ') {
                 delete TargetSemaine[key];
               }
               if (key === '__EMPTY_5') {
@@ -439,7 +439,7 @@ function Paie() {
             if (key === '__EMPTY_4') {
               newKey = 'HT';
             }
-            if (key === 'VILLE DE DOMICILIATION') {
+            if (key === 'VILLE DE DOMICILIATION ') {
               newKey = 'PDATR';
             }
             if (key === '__EMPTY_5') {
@@ -534,7 +534,7 @@ function Paie() {
           
           for (const key in moisDataFilteredObj) {
             if (SemaineReducFilter.hasOwnProperty(key)) {
-              resultat[key] = moisDataFilteredObj[key] - SemaineReducFilter[key];
+              resultat[key] = moisDataFilteredObj[key]// - SemaineReducFilter[key];
             } else {
               resultat[key] = moisDataFilteredObj[key];
             }
