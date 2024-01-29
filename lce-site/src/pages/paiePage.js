@@ -17,7 +17,7 @@ function Paie() {
 
   const handleFileImport = (event) => {
     const files = event.target.files;
-    const validExtensions = ['csv', 'xlsm'];
+    const validExtensions = ['csv', 'xlsm', 'xlsx'];
 
     const newValidFiles = Array.from(files).filter((file) => {
       const fileExtension = file.name.split('.').pop();
